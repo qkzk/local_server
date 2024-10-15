@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déposer un fichier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        .file-input {
+            margin: 20px 0;
+        }
+        .message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Déposez votre fichier</h1>
+        <form id="uploadForm">
+            <div class="file-input">
+                <input type="file" id="fileInput" name="file" required>
+            </div>
+            <button type="submit">Envoyer le fichier</button>
+        </form>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Récupérer le fichier
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const filename = file.name;
+            console.log(filename);
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('filename', filename);
+
+                // Envoyer la requête POST pour déposer le fichier
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Afficher le message de succès
+                    document.getElementById('message').innerText = 'Fichier déposé avec succès !';
+                })
+                .catch(error => {
+                    // Afficher le message d'erreur
+                    document.getElementById('message').innerText = 'Erreur lors de l\'envoi du fichier.';
+                    console.error('Erreur:', error);
+                });
+            } else {
+                document.getElementById('message').innerText = 'Veuillez sélectionner un fichier.';
+            }
+        });
+    </script>
+</body>
+</html>
+
